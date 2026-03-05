@@ -7,7 +7,7 @@ traversing and O(1) for checking size. */
 #include <stdlib.h> // for malloc
 
 struct Node {
-    int data;           // data for each pointer
+    int data;           // data
     struct Node* next;  // Node* is a POINTER, trav is the pointer
 }; // node struct
 
@@ -58,8 +58,10 @@ int main(void){
 // enqueueing
 void enqueue(struct Node** head, struct Node** tail, int data) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node)); // create new node and pointer to new node
+    /* - malloc is dynamic memory management, so it stores memory and the address of the byte of this node in RAM.
+    it is necessary given that every new node needs its own space */
     newNode->data = data; // set data for this new node
-    newNode->next = NULL; // This node is at the very end, so no one is behind it, so next is NULL.
+    newNode->next = NULL; // This node is at the very end (head), so no one is behind it, so next is NULL.
     if (*head == NULL) { 
         // If the list is empty, this person is the first AND the last.
         *head = *tail = newNode;
@@ -132,7 +134,9 @@ void Clear(struct Node** head, struct Node** tail) {
         nextNode = trav->next;
         free(trav);           // trav goes through the whole list, freeing each node as it goes, until it reaches the end (NULL)
         trav = nextNode;
+        /* important note: only free stuff only BEFORE setting their value to NULL, otherwise we will lose the
+        address of the memory we want to free and cause a memory leak*/
     }
-    *head = NULL;
-    *tail = NULL;
+    free(*head);
+    free(*tail); 
 }
