@@ -1,7 +1,7 @@
 // Casual switch implementation (rushed)
 #include <stdio.h>
 
-int main() {
+int main(void){
     // declaring variables
     float celsius, fahrenheit;
     int choice;
