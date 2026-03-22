@@ -28,7 +28,7 @@ int main() {
     // declaring values
     int Logo_w = 20; // The character count of the widest line
     int Logo_h = 4;  // The number of lines
-    int x, y = 0; // Initial Logo of the logo (we will update this later to start in the middle of the terminal)
+    int x, y = 0; // Initial position of the logo (we will update this later to start in the middle of the terminal)
 
     int r = 255, g = 0, b = 0; // starting rgb color (red)
     int phase = 0; // smooth color transition phase (0-5 for R->Y->G->C->B->M->R)
