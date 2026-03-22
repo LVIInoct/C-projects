@@ -45,6 +45,16 @@ int main() {
     noct.dx = 1; // Set horizontal speed
     noct.dy = 1; // Set vertical speed
 
+    #define TRAIL 6 // defines the length of the trail (how many previous positions to show)
+    // basically "every time you see TRAIL, replace it with 4 before compiling"
+
+    int trail_x[TRAIL]; // array to hold the x positions of the trail (previous positions of the logo), used for fading effect
+    int trail_y[TRAIL];
+    for (int i = 0; i < TRAIL; i++) { // initialize the trail positions to the starting position of the logo
+        trail_x[i] = noct.x;
+        trail_y[i] = noct.y;
+    }
+
     for(int i = 0; i < 4; i++) {
     noct.art[i] = noct_art[i]; // Copy the ASCII art lines into the Logo struct
 }
@@ -56,6 +66,24 @@ int main() {
         noct.y += noct.dy; // move vertically
         if (noct.x <= 1 || noct.x + 20 >= w.ws_col) noct.dx *= -1;
         if (noct.y <= 1 || noct.y + 4 >= w.ws_row) noct.dy *= -1;
+        // erase oldest trail
+        int old_x = trail_x[TRAIL - 1];
+        int old_y = trail_y[TRAIL - 1];
+
+        for (int i = 0; i < 4; i++) {
+            printf("\033[%d;%dH%*s", old_y + i, old_x, 20, " ");
+        }
+
+        // shift trail
+        for (int i = TRAIL - 1; i > 0; i--) {
+            trail_x[i] = trail_x[i - 1];
+            trail_y[i] = trail_y[i - 1];
+        }
+
+        // insert current position
+        trail_x[0] = noct.x;
+        trail_y[0] = noct.y;
+        
 
         //rgb and avoiding black/white colors + smooth transitions (i know this is a mess but it works and i dont care)
         switch (phase) {
@@ -67,10 +95,21 @@ int main() {
             case 5: b -= speed; if (b <= 0)   { b = 0;   phase = 0; } break; // M->R
         }
 
-        // printing the art by going through each line
-        for (int i = 0; i < 4; i++) {
-            printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s\033[0m", // I never saw this many specifiers in one line before oh god
-                        noct.y + i, noct.x, r, g, b, noct.art[i]); // prints rgb version
+        // printing the art by going through each line (using trail for fading effect)
+        float fadeout[TRAIL] = {1.0, 0.6, 0.3, 0.15, 0.07, 0.03};
+
+        for (int t = TRAIL - 1; t >= 0; t--) { // print from oldest to newest for proper layering (oldest is most faded, newest is brightest)
+            int rr = r * fadeout[t];
+            int gg = g * fadeout[t];
+            int bb = b * fadeout[t];
+            // i don't understand this fully, i'll be honest
+            for (int i = 0; i < 4; i++) {
+                printf("\033[%d;%dH\033[38;2;%d;%d;%dm%s\033[0m",
+                    trail_y[t] + i,
+                    trail_x[t],
+                    rr, gg, bb,
+                    noct.art[i]);
+            }
         }
 
         fflush(stdout); // Ensure the output is printed immediately
