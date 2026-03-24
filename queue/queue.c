@@ -109,11 +109,17 @@ void peekLast(struct Node* tail){
 }
 // poll
 void poll(struct Node** head, struct Node** tail){
+    if (*head == NULL){
+        printf("Queue is empty.");
+        *tail = NULL;
+        return;
+    } // if there's no head after polling, then the list is empty, so tail should also be NULL
     struct Node* temp = *head; // temporary pointer to the current head to remove it
-    if (*head == NULL) // if there's no head after polling, then the list is empty, so tail should also be NULL
-    *tail = NULL;
-    free(temp);
     *head = (*head)->next; // point head to next that comes afterwards
+    if (*head == NULL){
+        *tail = NULL;
+    }
+    free(temp);
 }
 
 // display list
@@ -142,7 +148,7 @@ void Clear(struct Node** head, struct Node** tail) {
         trav = nextNode;
         /* important note: only free stuff only before setting their value to NULL, otherwise we will lose the
         address of the memory we want to free and cause a memory leak*/
-        *head = NULL; // set head and tail to null after freeing everything, so it doesn't point to any of the freed memory
-        *tail = NULL;
     }
+    *head = NULL; // set head and tail to null after freeing everything, so it doesn't point to any of the freed memory
+    *tail = NULL;
 }
