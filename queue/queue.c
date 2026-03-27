@@ -17,7 +17,7 @@ void peekLast(struct Node* tail);
 void enqueue(struct Node** head, struct Node** tail, int data);
 void poll(struct Node** head, struct Node** tail);
 void display(struct Node* head);
-void Clear(struct Node** head, struct Node** tail);
+void clear(struct Node** head, struct Node** tail);
 
 int main(void){
     // declaring values
@@ -26,17 +26,18 @@ int main(void){
     int choice;
     while (1){
         // menu
-            printf("What would you like to do?\n 1) enqueue \n 2) poll \n 3) Peek first (tail)\n 4) peek last (tail) \n 5) Check size of array and content\n 6)Exit\n");
+            printf("What would you like to do?\n 1) enqueue \n 2) poll \n 3) Peek first (head)\n 4) peek last (tail) \n 5) Check size of array and content\n 6)Exit\n");
             scanf("%d", &choice);
             switch (choice) {
-                case 1: // enqueue first element
+                case 1: { // enqueue first element
                     int value; // element value
                     printf("Enter value:\n > "); // prompt for element value
                     scanf("%d", &value); // takes element value as input
                     enqueue(&head, &tail, value); // sends it to the Queue function to be added to the list
                     break;
+                    }
                 case 2:
-                    poll(&head, &tail); // check size of list
+                    poll(&head, &tail); // remove first element
                     break;
                 case 3:
                     peekFirst(head); // peek first (head)
@@ -48,7 +49,7 @@ int main(void){
                     display(head); // since polling remodels and manipulates the head, it takes its address by &head, so it can poll it
                     break;
                 case 6:
-                    Clear(&head, &tail); // free any leftovers in the list before exiting
+                    clear(&head, &tail); // free any leftovers in the list before exiting
                     printf("Exiting program & clearing leftovers.\n");
                     return 0; // force exit
                 default: // the 'else' of switch
@@ -71,7 +72,7 @@ void enqueue(struct Node** head, struct Node** tail, int data) {
     return; // return user
     }
     newNode->data = data; // set data for this new node
-    newNode->next = NULL; // This node is at the very end (head), so no one is behind it, so next is NULL.
+    newNode->next = NULL; // This node is at the very end (tail), so no one is behind it, so next is NULL.
     if (*head == NULL) { 
         // If the list is empty, this person is the first AND the last.
         *head = *tail = newNode;
@@ -84,27 +85,24 @@ void enqueue(struct Node** head, struct Node** tail, int data) {
 
 // peek first
 void peekFirst(struct Node* head) { // peeks head
-    struct Node* trav = head; // start at the beginning
-    if (trav == NULL) { // if there is no head, then the list is empty
+    if (head == NULL) { // if there is no head, then the list is empty
         printf("List is empty\n");
         return;
     }
     else {
-        printf("First element: %d\n", trav->data); // show data of first element ever added
+        printf("First element: %d\n", head->data); // show data of first element ever added
     }
-
     printf("\n");
 
 }
 // peek last
 void peekLast(struct Node* tail){
-    struct Node* trav = tail; // start at tail, which is the last element
-    if (trav == NULL) { // if there is no tail , then the list is empty
+    if (tail == NULL) { // if there is no tail , then the list is empty
         printf("List is empty\n");
         return;
     }
     else {
-        printf("Last element: %d\n", trav->data); // show data of last element ever added
+        printf("Last element: %d\n", tail->data); // show data of last element ever added
     }
 }
 // poll
@@ -115,6 +113,7 @@ void poll(struct Node** head, struct Node** tail){
         return;
     } // if there's no head after polling, then the list is empty, so tail should also be NULL
     struct Node* temp = *head; // temporary pointer to the current head to remove it
+    printf("Removed: %d\n", temp->data); // print what's being removed before freeing it
     *head = (*head)->next; // point head to next that comes afterwards
     if (*head == NULL){
         *tail = NULL;
@@ -139,7 +138,7 @@ void display(struct Node* head) {
     printf("Size: %d\n", size);
 }
 // get rid of any leftovers after leaving
-void Clear(struct Node** head, struct Node** tail) {
+void clear(struct Node** head, struct Node** tail) {
     struct Node* trav = *head; // starting node
     struct Node* nextNode;    // pointer
     while (trav != NULL) {
