@@ -37,7 +37,7 @@ int main(void){
                     break;
                     }
                 case 2:
-                    poll(&head, &tail); // remove first element
+                    poll(&head, &tail); // remove first element, manipulates the queue so it takes & for the address
                     break;
                 case 3:
                     peekFirst(head); // peek first (head)
@@ -46,7 +46,7 @@ int main(void){
                     peekLast(tail); // peek last (tail)
                     break;
                 case 5:
-                    display(head); // since polling remodels and manipulates the head, it takes its address by &head, so it can poll it
+                    display(head);
                     break;
                 case 6:
                     clear(&head, &tail); // free any leftovers in the list before exiting
