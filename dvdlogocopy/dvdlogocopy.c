@@ -16,8 +16,7 @@ void handle_sigint(int sig);
 
 int main() {
     struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); /* From now on, we can use w.ws_row and w.ws_col to get the
-    number of rows and columns in the terminal, respectively. */
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w); // From now on, we can use w.ws_row and w.ws_col to get the number of rows and columns in the terminal, respectively
 
     char *noct_art[] = { // defining the ascii art for the logo
         "   _  __         __",
@@ -30,8 +29,8 @@ int main() {
     int x = 0, y = 0; // initial position of the logo (updated below to center it)
 
     int r = 255, g = 0, b = 0; // starting rgb color (red)
-    int phase = 0; // smooth color transition phase (0-5 for R->Y->G->C->B->M->R)
-    int speed = 15; // how fast the color changes (higher is faster, max 255 for smoothness)
+    int phase = 0; // color transition phase (0-5
+    int speed = 15; // how fast the color changes (higher is faster)
 
     x = (w.ws_col - 20) / 2; // start in the middle of the terminal
     y = (w.ws_row - 4) / 2;
@@ -57,7 +56,7 @@ int main() {
         noct.art[i] = noct_art[i]; // copy the ASCII art lines into the Logo struct
     }
 
-    // fadeout factors per trail step — never changes, so defined once outside the loop
+    // fadeout factors per trail step (never changes, so defined once outside the loop)
     float fadeout[TRAIL] = {1.0, 0.6, 0.3, 0.15, 0.07, 0.03};
     signal(SIGINT, handle_sigint); // restore cursor on Ctrl+C
 
@@ -90,14 +89,13 @@ int main() {
         trail_x[0] = noct.x;
         trail_y[0] = noct.y;
 
-        // smooth rgb color transition: R->Y->G->C->B->M->R
         switch (phase) {
-            case 0: g += speed; if (g >= 255) { g = 255; phase = 1; } break; // R->Y
-            case 1: r -= speed; if (r <= 0)   { r = 0;   phase = 2; } break; // Y->G
-            case 2: b += speed; if (b >= 255) { b = 255; phase = 3; } break; // G->C
-            case 3: g -= speed; if (g <= 0)   { g = 0;   phase = 4; } break; // C->B
-            case 4: r += speed; if (r >= 255) { r = 255; phase = 5; } break; // B->M
-            case 5: b -= speed; if (b <= 0)   { b = 0;   phase = 0; } break; // M->R
+            case 0: g += speed; if (g >= 255) { g = 255; phase = 1; } break;
+            case 1: r -= speed; if (r <= 0)   { r = 0;   phase = 2; } break;
+            case 2: b += speed; if (b >= 255) { b = 255; phase = 3; } break;
+            case 3: g -= speed; if (g <= 0)   { g = 0;   phase = 4; } break; 
+            case 4: r += speed; if (r >= 255) { r = 255; phase = 5; } break; 
+            case 5: b -= speed; if (b <= 0)   { b = 0;   phase = 0; } break; 
         }
 
         // print trail from oldest to newest for proper layering (oldest = most faded, newest = brightest)
